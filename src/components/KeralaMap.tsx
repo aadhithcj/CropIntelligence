@@ -41,6 +41,7 @@ interface LocationData {
 
 interface KeralaMapProps {
   onLocationSelect: (location: LocationData) => void;
+  onLocationAnalyze?: (location: LocationData) => void;
   selectedLocation?: LocationData | null;
 }
 
@@ -117,7 +118,7 @@ const MapEvents = ({ onMapClick }: { onMapClick: (lat: number, lng: number) => v
   return null;
 };
 
-const KeralaMap = forwardRef(({ onLocationSelect, selectedLocation }: KeralaMapProps, ref) => {
+const KeralaMap = forwardRef(({ onLocationSelect, onLocationAnalyze, selectedLocation }: KeralaMapProps, ref) => {
   const [clickedLocation, setClickedLocation] = useState<{ lat: number; lng: number } | null>(
     null
   );
@@ -168,12 +169,12 @@ const KeralaMap = forwardRef(({ onLocationSelect, selectedLocation }: KeralaMapP
       <MapContainer
         center={keralaCenter}
         zoom={8}
-        scrollWheelZoom={false} // ✅ disables scroll zoom
-        zoomControl={false} // manually adding ZoomControl below
+        scrollWheelZoom={false}
+        zoomControl={false}
         style={{ height: '100%', width: '100%' }}
       >
         <FlyToSetter />
-        <ZoomControl position="bottomright" /> {/* ✅ repositioned zoom buttons */}
+        <ZoomControl position="bottomright" />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -209,13 +210,23 @@ const KeralaMap = forwardRef(({ onLocationSelect, selectedLocation }: KeralaMapP
                     <span>{location.rainfall}mm</span>
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  className="w-full mt-2 bg-forest-500 hover:bg-forest-600"
-                  onClick={() => onLocationSelect(location)}
-                >
-                  Analyze Location
-                </Button>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs"
+                    onClick={() => onLocationSelect(location)}
+                  >
+                    Select
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-forest-500 hover:bg-forest-600 text-xs"
+                    onClick={() => onLocationAnalyze && onLocationAnalyze(location)}
+                  >
+                    Analyze Location
+                  </Button>
+                </div>
               </div>
             </Popup>
           </Marker>
@@ -225,12 +236,40 @@ const KeralaMap = forwardRef(({ onLocationSelect, selectedLocation }: KeralaMapP
           <Marker position={[clickedLocation.lat, clickedLocation.lng]}>
             <Popup>
               <div className="p-2">
-                <p className="font-medium">Analyzing location...</p>
+                <p className="font-medium">Custom Location</p>
                 <p className="text-sm text-gray-600">
                   Lat: {clickedLocation.lat.toFixed(4)}
                   <br />
                   Lng: {clickedLocation.lng.toFixed(4)}
                 </p>
+                <Button
+                  size="sm"
+                  className="w-full mt-2 bg-forest-500 hover:bg-forest-600"
+                  onClick={() => {
+                    // Find nearest sample location for default values
+                    const nearest = sampleLocations.reduce((a, b) => {
+                      const da = Math.hypot(a.lat - clickedLocation.lat, a.lng - clickedLocation.lng);
+                      const db = Math.hypot(b.lat - clickedLocation.lat, b.lng - clickedLocation.lng);
+                      return da < db ? a : b;
+                    });
+                  
+                    const locationData: LocationData = {
+                      lat: clickedLocation.lat,
+                      lng: clickedLocation.lng,
+                      name: `Location ${clickedLocation.lat.toFixed(3)}, ${clickedLocation.lng.toFixed(3)}`,
+                      district: 'Custom Location',
+                      bestCrop: nearest.bestCrop,
+                      yieldPotential: Math.max(50, nearest.yieldPotential + (Math.random() - 0.5) * 20),
+                      soilType: nearest.soilType,
+                      temperature: nearest.temperature + (Math.random() - 0.5) * 4,
+                      rainfall: nearest.rainfall + (Math.random() - 0.5) * 500,
+                      confidence: Math.max(60, 95 - Math.random() * 25)
+                    };
+                    onLocationAnalyze && onLocationAnalyze(locationData);
+                  }}
+                >
+                  Analyze Location
+                </Button>
               </div>
             </Popup>
           </Marker>

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import KeralaMap from './KeralaMap';
 import LocationSearch from './LocationSearch';
@@ -23,7 +24,12 @@ interface LocationData {
   confidence: number;
 }
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+  onLocationAnalyzed?: (location: LocationData) => void;
+  onNavigateToTab?: (tab: string) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ onLocationAnalyzed, onNavigateToTab }) => {
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -37,7 +43,7 @@ const Dashboard: React.FC = () => {
     Munnar: { lat: 10.0889, lng: 77.0595, district: 'Idukki', name: 'Munnar' }
   };
 
-  const handleLocationSelect = (location: any) => {
+  const handleLocationSelect = (location: any, shouldNavigate: boolean = false) => {
     setIsAnalyzing(true);
     setTimeout(() => {
       const enrichedLocation: LocationData = {
@@ -59,12 +65,25 @@ const Dashboard: React.FC = () => {
       }
 
       setIsAnalyzing(false);
+
+      // If shouldNavigate is true (from "Analyze Location" button), navigate to yield prediction
+      if (shouldNavigate && onLocationAnalyzed && onNavigateToTab) {
+        onLocationAnalyzed(enrichedLocation);
+        onNavigateToTab('prediction');
+      }
     }, 1200);
   };
 
   const handleQuickLocationClick = (loc: string) => {
     setActiveQuickLocation(loc);
     handleLocationSelect(locationCoordinates[loc]);
+  };
+
+  const handleViewFullDetails = () => {
+    if (selectedLocation && onLocationAnalyzed && onNavigateToTab) {
+      onLocationAnalyzed(selectedLocation);
+      onNavigateToTab('prediction');
+    }
   };
 
   return (
@@ -135,7 +154,11 @@ const Dashboard: React.FC = () => {
 
           <Card className="p-6 bg-white/80 backdrop-blur-sm">
             <h2 className="text-xl font-semibold text-forest-800 mb-4">Interactive Kerala Map</h2>
-            <KeralaMap onLocationSelect={handleLocationSelect} selectedLocation={selectedLocation} />
+            <KeralaMap 
+              onLocationSelect={(location) => handleLocationSelect(location, false)}
+              onLocationAnalyze={(location) => handleLocationSelect(location, true)}
+              selectedLocation={selectedLocation} 
+            />
           </Card>
         </div>
 
@@ -169,7 +192,7 @@ const Dashboard: React.FC = () => {
                     <p className="font-bold text-forest-800">{selectedLocation.yieldPotential.toFixed(1)}%</p>
                   </div>
                 </div>
-                <Button onClick={() => setIsDrawerOpen(true)} className="w-full mt-2 bg-forest-600 text-white hover:bg-forest-700">
+                <Button onClick={handleViewFullDetails} className="w-full mt-2 bg-forest-600 text-white hover:bg-forest-700">
                   View Full Details
                 </Button>
               </div>
