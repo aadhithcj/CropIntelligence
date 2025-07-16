@@ -43,21 +43,41 @@ const Dashboard: React.FC<DashboardProps> = ({ onLocationAnalyzed, onNavigateToT
     Munnar: { lat: 10.0889, lng: 77.0595, district: 'Idukki', name: 'Munnar' }
   };
 
-  const handleLocationSelect = (location: any, shouldNavigate: boolean = false) => {
+  const handleLocationSelect = async (location: any, shouldNavigate: boolean = false) => {
     setIsAnalyzing(true);
-    setTimeout(() => {
+    
+    try {
+      // Get crop prediction from backend
+      const predictionData = await import('../services/api').then(api => 
+        api.predictBestCrop({
+          district: location.district,
+          year: 2024,
+          rainfall: 2500, // Will be replaced with real weather data
+          monsoon: 1200,
+          score: 0.75
+        })
+      );
+
+      // Generate dynamic values based on location and prediction
+      const yieldPotential = 60 + Math.random() * 35; // 60-95%
+      const soilTypes = ['Laterite', 'Alluvial', 'Red Soil', 'Black Soil'];
+      const soilType = soilTypes[Math.floor(Math.random() * soilTypes.length)];
+      const temperature = 26 + Math.random() * 6; // 26-32°C
+      const rainfall = 1500 + Math.random() * 2000; // 1500-3500mm
+
       const enrichedLocation: LocationData = {
         lat: location.lat,
         lng: location.lng,
         name: location.name,
         district: location.district,
-        bestCrop: ['Rice', 'Coconut', 'Banana', 'Pepper', 'Cardamom'][Math.floor(Math.random() * 5)],
-        yieldPotential: 65 + Math.random() * 30,
-        soilType: ['Laterite', 'Alluvial', 'Red Soil', 'Black Soil'][Math.floor(Math.random() * 4)],
-        temperature: 26 + Math.random() * 6,
-        rainfall: 1500 + Math.random() * 2000,
-        confidence: 75 + Math.random() * 20
+        bestCrop: predictionData.predicted_crop || 'Rice',
+        yieldPotential: predictionData.yieldPotential || yieldPotential,
+        soilType: predictionData.soilType || soilType,
+        temperature: predictionData.temperature || temperature,
+        rainfall: predictionData.rainfall || rainfall,
+        confidence: predictionData.confidence || 80
       };
+      
       setSelectedLocation(enrichedLocation);
 
       if (mapRef.current) {
@@ -71,7 +91,24 @@ const Dashboard: React.FC<DashboardProps> = ({ onLocationAnalyzed, onNavigateToT
         onLocationAnalyzed(enrichedLocation);
         onNavigateToTab('prediction');
       }
-    }, 1200);
+    } catch (error) {
+      console.error('Error analyzing location:', error);
+      setIsAnalyzing(false);
+      // Fallback to basic location data
+      const fallbackLocation: LocationData = {
+        lat: location.lat,
+        lng: location.lng,
+        name: location.name,
+        district: location.district,
+        bestCrop: 'Rice',
+        yieldPotential: 70,
+        soilType: 'Laterite',
+        temperature: 28,
+        rainfall: 2500,
+        confidence: 60
+      };
+      setSelectedLocation(fallbackLocation);
+    }
   };
 
   const handleQuickLocationClick = (loc: string) => {

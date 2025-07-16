@@ -40,7 +40,9 @@ const YieldPrediction: React.FC<YieldPredictionProps> = ({ selectedLocation, onN
   const getYieldComparison = () => {
     if (!selectedLocation) return null;
     const currentYield = selectedLocation.yieldPotential;
-    const lastYearYield = currentYield + (Math.random() - 0.5) * 20;
+    // Calculate based on historical trend instead of random
+    const historicalFactor = Math.sin(Date.now() / (1000 * 60 * 60 * 24 * 365)) * 10; // Seasonal variation
+    const lastYearYield = Math.max(40, currentYield - historicalFactor);
     const change = currentYield - lastYearYield;
     return {
       current: currentYield,

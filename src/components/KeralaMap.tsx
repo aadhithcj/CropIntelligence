@@ -246,24 +246,17 @@ const KeralaMap = forwardRef(({ onLocationSelect, onLocationAnalyze, selectedLoc
                   size="sm"
                   className="w-full mt-2 bg-forest-500 hover:bg-forest-600"
                   onClick={() => {
-                    // Find nearest sample location for default values
-                    const nearest = sampleLocations.reduce((a, b) => {
-                      const da = Math.hypot(a.lat - clickedLocation.lat, a.lng - clickedLocation.lng);
-                      const db = Math.hypot(b.lat - clickedLocation.lat, b.lng - clickedLocation.lng);
-                      return da < db ? a : b;
-                    });
-                  
-                    const locationData: LocationData = {
+                    const locationData = {
                       lat: clickedLocation.lat,
                       lng: clickedLocation.lng,
                       name: `Location ${clickedLocation.lat.toFixed(3)}, ${clickedLocation.lng.toFixed(3)}`,
                       district: 'Custom Location',
-                      bestCrop: nearest.bestCrop,
-                      yieldPotential: Math.max(50, nearest.yieldPotential + (Math.random() - 0.5) * 20),
-                      soilType: nearest.soilType,
-                      temperature: nearest.temperature + (Math.random() - 0.5) * 4,
-                      rainfall: nearest.rainfall + (Math.random() - 0.5) * 500,
-                      confidence: Math.max(60, 95 - Math.random() * 25)
+                      bestCrop: '',
+                      yieldPotential: 0,
+                      soilType: '',
+                      temperature: 0,
+                      rainfall: 0,
+                      confidence: 0
                     };
                     onLocationAnalyze && onLocationAnalyze(locationData);
                   }}

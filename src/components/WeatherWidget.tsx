@@ -38,23 +38,31 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call
-    const fetchWeather = () => {
+    const fetchWeather = async () => {
       setIsLoading(true);
-      setTimeout(() => {
-        // Generate realistic weather data for Kerala
+      try {
+        // Get weather data from API
+        const weatherData = await import('../services/api').then(api => 
+          api.getWeatherData(9.9312, 76.2673) // Default to Kochi coordinates
+        );
+        
+        setWeather(weatherData);
+      } catch (error) {
+        console.error('Error fetching weather:', error);
+        // Fallback to default data
         setWeather({
-          temperature: 26 + Math.random() * 6, // 26-32°C
-          humidity: 70 + Math.random() * 25, // 70-95%
-          rainfall: Math.random() * 5, // 0-5mm
-          windSpeed: 8 + Math.random() * 12, // 8-20 km/h
-          pressure: 1008 + Math.random() * 10, // 1008-1018 hPa
-          visibility: 6 + Math.random() * 4, // 6-10 km
-          condition: ['sunny', 'cloudy', 'rainy', 'partly-cloudy'][Math.floor(Math.random() * 4)] as any,
-          uvIndex: 5 + Math.random() * 6 // 5-11
+          temperature: 28,
+          humidity: 75,
+          rainfall: 2.5,
+          windSpeed: 12,
+          pressure: 1013,
+          visibility: 8,
+          condition: 'partly-cloudy',
+          uvIndex: 6
         });
+      } finally {
         setIsLoading(false);
-      }, 1000);
+      }
     };
 
     fetchWeather();
