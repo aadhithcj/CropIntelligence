@@ -1,54 +1,67 @@
-# React + TypeScript + Vite
+# 🌾 CropIntelligence – A Location-Based Crop Recommendation and Yield Prediction System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CropIntelligence is a machine learning-powered web application designed to support intelligent agricultural decision-making for farmers and agricultural planners in **Kerala, India**. The system predicts the most suitable crops for a given location and climate using historical data, and enables users to compare expected yields across multiple crops.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 📍 **Location-Based Crop Recommendation**  
+  Suggests the best crop for a district based on climate, soil, and historical data.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- 🌦 **Real-Time Weather Integration**  
+  Uses current temperature and rainfall for dynamic yield predictions.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- 📊 **Crop Comparison**  
+  Visualize and compare yield potential across various crops in a selected district.
+
+- 🗺 **Kerala Map Integration**  
+  Interactive district-level map for intuitive exploration and predictions.
+
+- 🧠 **Machine Learning Model**  
+  Logistic Regression model trained on district-wise crop yield, temperature, rainfall, and soil type data.
+
+---
+
+## 🛠 Tech Stack
+
+| Frontend              | Backend              | Machine Learning        | Data              |
+|-----------------------|----------------------|--------------------------|-------------------|
+| React + Vite          | Flask (Python)       | Logistic Regression (Sklearn) | Kerala district-wise yield, rainfall, temperature, soil |
+
+
+---
+
+## 📸 Screenshots
+
+> _(Add screenshots of the Kerala map, yield prediction UI, crop recommendation panel, etc.)_
+
+---
+
+## 🧪 Model & Dataset
+
+- Model: **Logistic Regression** (multi-class classification)
+- Features: `district`, `rainfall`, `temperature`, `soil_type`
+- Labels: Crop categories (e.g., Rice, Banana, Coconut, etc.)
+
+---
+
+## 📦 Installation
+
 ```
+# Clone the repository
+git clone https://github.com/aadhithcj/CropIntelligence.git
+cd CropIntelligence
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+# Backend Setup
+cd backend
+pip install -r requirements.txt
+python app.py
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Frontend Setup
+cd ../frontend
+npm install
+npm run dev
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+##📧 Contact
+Made with ❤️ by Aadhith C J, Akmal Ansari, Ajilash Edward, Arjun Surya
