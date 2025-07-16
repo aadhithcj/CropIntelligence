@@ -9,13 +9,13 @@ CORS(app)
 
 # Load the trained model, scaler, and label encoder
 try:
-    with open(r"D:\ICT Project\kerala-crop-oracle\kerala-crop-oracle\flask_backend\best_model.pkl", "rb") as f:
+    with open(r"D:\ICT Project\CropIntelligence\flask_backend\best_model.pkl", "rb") as f:
         model = pickle.load(f)
-    
-    with open(r"D:\ICT Project\kerala-crop-oracle\kerala-crop-oracle\flask_backend\scaler.pkl", "rb") as f:
+
+    with open(r"D:\ICT Project\CropIntelligence\flask_backend\scaler.pkl", "rb") as f:
         scaler = pickle.load(f)
 
-    with open(r"D:\ICT Project\kerala-crop-oracle\kerala-crop-oracle\flask_backend\label_encoder.pkl", "rb") as f:
+    with open(r"D:\ICT Project\CropIntelligence\flask_backend\label_encoder.pkl", "rb") as f:
         label_encoder = pickle.load(f)
     
     print("Models loaded successfully!")
