@@ -25,9 +25,9 @@ CropIntelligence is a machine learning-powered web application designed to suppo
 
 ## 🛠 Tech Stack
 
-| Frontend              | Backend              | Machine Learning        | Data              |
+| Frontend              | Backend              | Machine Learning         | Data              |
 |-----------------------|----------------------|--------------------------|-------------------|
-| React + Vite          | Flask (Python)       | Logistic Regression (Sklearn) | Kerala district-wise yield, rainfall, temperature, soil |
+| React + Vite          | Flask (Python)       | Logistic Regression (Sklearn) | Kerala district-wise yield, rainfall
 
 
 ---
@@ -41,7 +41,7 @@ CropIntelligence is a machine learning-powered web application designed to suppo
 ## 🧪 Model & Dataset
 
 - Model: **Logistic Regression** (multi-class classification)
-- Features: `district`, `rainfall`, `temperature`, `soil_type`
+- Features: `district`, `rainfall`
 - Labels: Crop categories (e.g., Rice, Banana, Coconut, etc.)
 
 ---
